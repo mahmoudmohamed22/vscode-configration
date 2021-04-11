@@ -1,0 +1,136 @@
+{
+	"adj": {
+		"body": "//for(int i=head[u];~i;i=nxt[i])\nconst int N = 2e5 + 10, M = 2 * N;\nint head[N], nxt[M], to[M],n,ne;\nvoid init() {\n    memset(head, -1, n * sizeof head[0]);\n    ne = 0;\n}\nvoid addEdge(int f, int t) {\n    to[ne] = t;\n    nxt[ne] = head[f];\n    head[f] = ne++;\n}\nvoid addBiEdge(int u, int v) {\n    addEdge(u, v);\n    addEdge(v, u);\n}\n$0",
+		"description": "adj list",
+		"prefix": "adj"
+	},
+	"lca": {
+		"body": "int ln;\nvector<int> lvl;\nvector<vector<int>> dp,g;\nvoid dfs(int u,int p){\n\tlvl[u] = lvl[p] +1;\n\tdp[u][0] = p;\n\tfor(int i=1;i<ln;i++)\n\t\tdp[u][i] = dp[dp[u][i-1]][i-1];\n\tfor (auto &i: g[u])\n\t\tif(i!=p)dfs(i,u);\n}\nint lca (int u,int v){\n\tif(lvl[u]<lvl[v])swap(u,v);\n\tfor(int i=0,d=lvl[u] - lvl[v];d;i++,d>>=1)\n\t\tif(d&1) u = dp[u][i];\n\tif(u == v)return u;\n\tfor(int i=ln-1;i>=0;i++)if(dp[u][i]!=dp[v][i]){\n\t\tu = dp[u][i];\n\t\tv = dp[v][i];\n\t}\n\treturn dp[u][0];\n}\n$0",
+		"description": "binary lifting",
+		"prefix": "lca"
+	},
+	"bipartite": {
+		"body": "vector<vector<int>> v;\nvector<int>color;\nbool dfs(int i,int c){\n    if(color[i])return color[i] == c;\n    color[i] = c;\n    c = -c;\n    for (auto &j: v[i])if(!dfs(j,c))return 0;\n    return 1;\n}\n$0",
+		"prefix": "bipartite"
+	},
+	"diameter": {
+		"body": "int diam;\nvector<int> v[N];\nint dfs(int i, int p) {\n    int depths[3] = {0, 0, 0};\n    for(int j: v[i])if(j!=p){\n        int dep = 1 + dfs(j, i);\n        depths[0] = dep;\n        sort(depths, depths + 3);\n    }\n    diam = max(diam, depths[1] + depths[2]);\n    return depths[2];\n}\n$0",
+		"description": "diameter",
+		"prefix": "diameter"
+	},
+	"divs": {
+		"body": "vector<int> divs;\nvoid divisors(int n){\n\tint i=1;\n\tfor(;1ll*i*i<n;i++)if(n%i==0)divs.push_back({i,n/i});\n\tif(n%i==0)divs.push_back(i);\n}\n$0",
+		"description": "divisors",
+		"prefix": "divs"
+	},
+	"euler": {
+		"body": "const int N=1e5+5;\nint m, n, s;\nvector<int> in, out;\nvector<vector<int>>g;\nbitset<N>vis ;\nlist<int> res;\nvoid dfs(int i) {\n    vis[i] = 1;\n    for (int &j : g[i])if (!vis[j])dfs(j);\n}\nbool ok() {\n    s = -1;\n    for (int i = 0 ; i < n; i++) {\n        if (out[i] - in[i] == 1) {\n            if (s != -1)return 0;\n            s = i;\n        } else if (abs(out[i] - in[i]) > 1)return 0;\n    }\n    if (s == -1)for (s = 0; s < n && !out[s]; s++);\n    vis.reset();\n    dfs(s);\n    for (int i = 0; i < n; i++)if ((in[i] || out[i]) && !vis[i])return 0;\n    return 1;\n}\nvoid euler(int i){\n    while(out[i])euler(g[i][--out[i]]);\n    res.push_front(i);\n}\n$0",
+		"description": "euler",
+		"prefix": "euler"
+	},
+	"fact": {
+		"body": "ll fact[N]={1,1};\nll f(int i){\n\tif(fact[i])return fact[i];\n\treturn fact[i]=i*f(i-1)%mod;\n}\n$0",
+		"description": "factorial",
+		"prefix": "fact"
+	},
+	"factor": {
+		"body": "vector<pair<int,int>> factor;\nvoid getfactor(int n){\n\tint c=0;\n\twhile(!(n&1)){\n\t\tc++;\n\t\tn>>=1;\n\t}\n\tif(c)factor.push_back({2,c});\n\tfor (int i = 3; 1ll*i*i <= n; i+=2){\n\t\tc=0;\n\t\twhile(n%i==0){\n\t\t\tn/=i;\n\t\t\tc++;\n\t\t}\n\t\tif(c)factor.push_back({i,c});\n\t}\n\tif(n>1)factor.push_back({n,1});\n}\n$0",
+		"description": "factors",
+		"prefix": "factor"
+	},
+	"fast": {
+		"body": "ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);\n$0",
+		"description": "read write",
+		"prefix": "fast"
+	},
+	"fenwick": {
+		"body": "struct Fenwick{\n\tint N;\n\tvector<${1:int}> v;\n\tFenwick(int n){N = n;v={0};}\n\tFenwick(const vector<$1> &a):Fenwick(a.size()+1){\n\t\tv.insert(v.end(), a.begin(),a.end());\n\t\tfor(int i=1;i<N;i++){\n\t\t\tint p = i + lsb(i);\n\t\t\tif(p < v.size())v[p] += v[i];\n\t\t}\n\t}\n\tvoid add(int i,$1 val){\n\t\twhile(i<v.size()){\n\t\t\tv[i] += val;\n\t\t\ti += lsb(i);\n\t\t}\n\t}\n\t$1 sum(int i){\n\t\t$1 sm = 0 ;\n\t\twhile(i){\n\t\t\tsm += v[i];\n\t\t\ti &= ~lsb(i);\n\t\t}\n\t\treturn sm;\n\t}\n\t$1 lsb(int i){return i&-i;}\n\t$1 sum(int l,int r){return sum(r)-sum(l-1);} \n\t$1 get(int i){return v[i];}\n\tvoid set(int i,$1 val){add(i,val-v[i]);}\n};\n$0",
+		"description": "Fenwick tree",
+		"prefix": "fenwick"
+	},
+	"fora": {
+		"body": "for (auto &${2:i}: ${1:v}){\n\t$0\n}",
+		"description": "For Loop",
+		"prefix": "fora"
+	},
+	"ii": {
+		"body": "#include <bits/stdc++.h>\n#include <ext/pb_ds/assoc_container.hpp>\n#pragma GCC target (\"avx2\")\n#pragma GCC optimization (\"O3\")\n#pragma GCC optimization (\"unroll-loops\")\n#define all(x) x.begin(), x.end()\n#define rall(x) x.rbegin(), x.rend()\nusing namespace std;\nusing namespace __gnu_pbds;\ntypedef long long ll;\ntypedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> indexed_set;\nconst int N = 1e5 + 5;\nint main() {\n\t$0\n}\n/* try tricky test cases:\n      -bounds\n      -integer overflow\n      -small input (0, 1)\n      -big input\n      -random tests\n*/",
+		"description": "init codeforces",
+		"prefix": "ii"
+	},
+	"is": {
+		"body": "#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n\t$0\n}",
+		"description": "init simple",
+		"prefix": "is"
+	},
+	"iit": {
+		"body": "#include <bits/stdc++.h>\n#include <ext/pb_ds/assoc_container.hpp>\n#pragma GCC target (\"avx2\")\n#pragma GCC optimization (\"O3\")\n#pragma GCC optimization (\"unroll-loops\")\n#define all(x) x.begin(), x.end()\n#define rall(x) x.rbegin(), x.rend()\nusing namespace std;\nusing namespace __gnu_pbds;\ntypedef long long ll;\ntypedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> indexed_set;\nconst int N = 1e5 + 5;\n${1:int} solve(){\n\t$0\n}\nint main() {\n\tint t;cin>>t;\n\twhile(t--){\n\t\tcout<<solve()<<endl;\n\t}\n}\n/* try tricky test cases:\n      -bounds\n      -integer overflow\n      -small input (0, 1)\n      -big input\n      -random tests\n*/",
+		"description": "init codeforces",
+		"prefix": "iit"
+	},
+	"isprime": {
+		"body": "bool isprime(int n){\n\tif(n==2)return 1;\n\tif(!(n&1) || n==1)return 0;\n\tfor(int i=3;1ll*i*i<=n;i+=2)if(n%i==0)return 0;\n\treturn 1;\n}\n$0",
+		"description": "is prime",
+		"prefix": "isprime"
+	},
+	"matexp": {
+		"body": "typedef long long ll;\ntypedef vector<ll> vl;\ntypedef vector<vl> vvl;\nconst int mod= 1e9+7;\nvvl operator*(const vvl &a,const vvl &b) {\n    vvl c(a.size(), vl(b[0].size()));\n    for (int i = 0; i < a.size(); ++i)\n        for (int j = 0; j < b[0].size(); ++j)\n            for (int k = 0; k < a[0].size(); ++k)\n                c[i][j] += a[i][k] * b[k][j]%mod,\n                c[i][j] %=mod;\n    return c;\n}\nvvl power(vvl &b,ll p){\n    vvl ret(b.size(),vl(b.size()));\n    for (int i = 0; i < b.size(); ++i)ret[i][i] = 1;\n    while(p){\n        if(p&1)ret = ret*b;\n        b = b*b;\n        p>>=1;\n    }\n    return ret;\n}\n$0",
+		"description": "matrix exponent",
+		"prefix": "matexp"
+	},
+	"ncr": {
+		"body": "ull ncr(int n, int r) {\n    ull ret = 1;\n    for (int i = r + 1; i <= n; ++i) {\n        ull d = (i - r);\n        ull q = ret / d;\n        ull rem = ret - (q * d);\n        ret = (q * i) + (rem * i) / d;\n    }\n    return ret;\n}\n$0",
+		"description": "ncr",
+		"prefix": "ncr"
+	},
+	"ncr1": {
+		"body": "ll ncr(ll n,ll r){return f(n)*power(f(n-r)*f(r)%mod,mod-2,mod);}\n$0",
+		"description": "with reminder",
+		"prefix": "ncr"
+	},
+	"ci": {
+		"body": "const int N=1e5+5,mod= 1e9+7;\n$0",
+		"description": "N,mod",
+		"prefix": "ci"
+	},
+	"pascal": {
+		"body": "typedef long long ll;\nconst int N = 101;\nll dp[N][N];\n//memset(dp,-1,sizeof(dp));\nll ncr(int n, int r){\n    if(n == r || !r) return 1;\n    if(n < r) return 0;\n    ll &ret = dp[n][r];\n    if(~ret) return ret;\n    return ret = ncr(n - 1, r - 1) + ncr(n - 1, r);\n}\n$0",
+		"description": "ncr",
+		"prefix": "pascal"
+	},
+	"power": {
+		"body": "ll power(ll b, ll p, ll mod) {\n\tll ret = 1;\n\twhile (p) {\n\t\tif (p & 1)ret = ret * b % mod;\n\t\tb = b * b % mod;\n\t\tp >>= 1;\n\t}\n\treturn ret;\n}\n$0",
+		"description": "fast power",
+		"prefix": "power"
+	},
+	"r": {
+		"body": "freopen(\"in.txt\", \"r\", stdin);\n$0",
+		"description": "read",
+		"prefix": "r"
+	},
+	"scanf": {
+		"body": "scanf(\"%${1:d}\",&${2:n});\n$0",
+		"description": "scanf \u2026",
+		"prefix": "scanf"
+	},
+	"segTree": {
+		"body": "class SegmentTree {\nprivate:\n\tint n, ql, qr;\n\tvector<int> t;\n\tint sum(int i, int l, int r) {\n\t\tif (l > qr || r < ql)return 0;\n\t\tif (l >= ql && r <= qr)return t[i];\n\t\treturn sum(i << 1, l, (l + r) >> 1) + sum((i << 1) + 1, ((l + r) >> 1) + 1 , r);\n\t}\n\tvoid build (const vector<int>& a, int v, int tl , int tr) {\n\t\tif (tl == tr)t[v] = a[tl];\n\t\telse {\n\t\t\tint tm = (tl + tr) >> 1;\n\t\t\tbuild(a, v << 1, tl, tm);\n\t\t\tbuild(a, (v << 1) + 1, tm + 1, tr);\n\t\t\tt[v] = t[v << 1] + t[(v << 1) + 1];\n\t\t}\n\t}\n\tvoid update(int i, int l, int r) {\n\t\tif (ql > r || ql < l)return ;\n\t\tif (ql == l && ql == r) {t[i] = qr; return;}\n\t\tupdate(i <<1, l, (l + r) >>1);\n\t\tupdate((i <<1) + 1, ((l + r) >>1) + 1, r);\n\t\tt[i] = t[i <<1] + t[(i <<1) + 1];\n\t}\npublic:\n\tSegmentTree(int n) {\n\t\tthis->n = n;\n\t\tt.resize(n << 2);\n\t};\n\tint sum(int l, int r) {\n\t\tql = l;\n\t\tqr = r;\n\t\treturn sum(1, 0, n - 1);\n\t}\n\tvoid build(const vector<int> &a) {\n\t\tbuild(a, 1, 0, n - 1);\n\t}\n\tvoid update(int pos , int val){\n\t\tql = pos;\n\t\tqr = val;\n\t}\n};\n$0",
+		"description": "segment tree",
+		"prefix": "segTree"
+	},
+	"sieve": {
+		"body": "bitset<N> b;\nvector<int> p;\nvoid sieve(){\n\tb.set();\n\tb[0]=b[1]=0;\n\tfor(int i=4;i<N;i+=2)b[i]=0;\n\tp.push_back(2);\n\tfor(int i=3;i<N;i+=2)if(b[i]){\n\t\tp.push_back(i);\n\t\tfor(ll j=1ll*i*i;j<N;j+=(i<<1))b[j]=0;\n\t}\n}\n$0",
+		"description": "sieve",
+		"prefix": "sieve"
+	},
+	"while": {
+		"body": "while(${1:${2:t}--}){\n\t$0\n}",
+		"description": "While Loop",
+		"prefix": "while"
+	},
+	"w": {
+		"body": "freopen(\"out.txt\", \"w\", stdout);\n$0",
+		"description": "write",
+		"prefix": "w"
+	}
+}
